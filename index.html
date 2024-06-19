@@ -77,6 +77,7 @@
             var queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
             
             var finalUrl = url + '?' + queryString;
+            console.log("Final URL: " + finalUrl); // Log final URL for debugging
             
             // Send data using fetch API
             fetch(finalUrl)
