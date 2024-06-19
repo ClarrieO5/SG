@@ -8,6 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin: 0;
 }
 
 .form {
@@ -23,6 +24,12 @@ body {
     font-size: 28px;
     margin-bottom: 30px;
     color: #000;
+}
+
+.greeting {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
 }
 
 input[type=text], input[type=password] {
@@ -43,6 +50,7 @@ input[type=submit] {
     font-size: 16px;
     border-radius: 4px;
     cursor: pointer;
+    width: calc(100% - 24px);
 }
 
 input[type=submit]:hover {
